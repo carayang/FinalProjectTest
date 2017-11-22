@@ -118,3 +118,4 @@ public class InventoryManagementFrame extends JFrame {
 }
 
 test1
+test2
