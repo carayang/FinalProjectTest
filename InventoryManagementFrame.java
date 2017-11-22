@@ -5,11 +5,11 @@ import java.awt.event.KeyListener;
 import javax.swing.*;
 import javax.swing.border.*;
 
+@SuppressWarnings("serial")
 public class InventoryManagementFrame extends JFrame {
 	private JLabel idLabel;
 	private JTextField idTextField;
 	private JLabel idAlertLabel;
-	private JTextField jf1;//for testing need
 
 	public InventoryManagementFrame() {
 		super();
@@ -27,7 +27,6 @@ public class InventoryManagementFrame extends JFrame {
 	private void createCompoments() {
 		idLabel = new JLabel("ID");
 		idTextField = new JTextField(10);
-		jf1 = new JTextField(10);//for testing
 		idAlertLabel = new JLabel("ID's length should be 10, only number.");
 		idAlertLabel.setForeground(Color.red);
 		idSetTrue();
@@ -37,7 +36,6 @@ public class InventoryManagementFrame extends JFrame {
 		JPanel componetsPanel = new JPanel();
 		componetsPanel.add(idLabel);
 		componetsPanel.add(idTextField);
-		componetsPanel.add(jf1);
 		componetsPanel.add(idAlertLabel);
 		this.add(componetsPanel);
 	}
@@ -49,73 +47,73 @@ public class InventoryManagementFrame extends JFrame {
 
 	private void idSetWrong() {
 		idTextField.setBorder(new LineBorder(Color.red));
-		idAlertLabel.setVisible(true);
+		idAlertLabel.setForeground(Color.red);
 	}
 
 	private void idSetTrue() {
 		idTextField.setBorder(new LineBorder(Color.black));
-		idAlertLabel.setVisible(false);
+		idAlertLabel.setForeground(Color.black);
 	}
+
 	private class VIDListener implements KeyListener {
-	    @Override
-	    public void keyPressed(KeyEvent e){}
-	    @Override
-	    public void keyReleased(KeyEvent e){}
-	    @Override
-	    public void keyTyped(KeyEvent e){
-	        int keyInput = e.getKeyChar();
-	        if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
-					&& (keyInput < KeyEvent.VK_0 || keyInput > KeyEvent.VK_9)){
-	            idSetWrong();
-	            e.consume();//invalid numeric input will be eliminated
-	        }
-			String str = idTextField.getText();
-	        if(keyInput == KeyEvent.VK_ENTER){
-	        	if(str.length() != 10)
-	        		idSetWrong();
-	        	else
-	        		idSetTrue();
+		@Override
+		public void keyPressed(KeyEvent e) {
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+		}
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			int keyInput = e.getKeyChar();
+			if (keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&& (keyInput < KeyEvent.VK_0 || keyInput > KeyEvent.VK_9)) {
+				idSetWrong();
+				e.consume();// invalid numeric input will be eliminated
 			}
-			if(keyInput == KeyEvent.VK_BACK_SPACE){
-	        	if(str.length() < 10){
-	        		idSetTrue();
+			String str = idTextField.getText();
+			if (keyInput == KeyEvent.VK_ENTER) {
+				if (str.length() != 10)
+					idSetWrong();
+				else
+					idSetTrue();
+			}
+			if (keyInput == KeyEvent.VK_BACK_SPACE) {
+				if (str.length() < 10) {
+					idSetTrue();
 				}
 			}
-			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE){
-				if(str.length() == 9)
+			if (keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE) {
+				if (str.length() == 9)
 					idSetTrue();
-				if(str.length() > 9){
+				if (str.length() > 9) {
 					idSetWrong();
 					e.consume();
 				}
 			}
-	    }
+		}
 	}
 
 	public class VehicleIDVerifier extends InputVerifier {
 
-		public boolean verify(JComponent input){
-			String vid = ((JTextField)input).getText();
-			if(vid.length() == 10){
+		public boolean verify(JComponent input) {
+			String vid = ((JTextField) input).getText();
+			if (vid.length() == 10) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
 
 		public boolean shouldYieldFocus(JComponent input) {
 			boolean valid = verify(input);
-			if(!valid){
+			if (!valid) {
 				idSetWrong();
-			}else{
+			} else {
 				idSetTrue();
 			}
 			return valid;
 		}
-
 	}
-
 }
-
-test1
-test2
