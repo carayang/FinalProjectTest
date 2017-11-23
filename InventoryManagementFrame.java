@@ -44,7 +44,7 @@ public class InventoryManagementFrame extends JFrame {
 		webIdSetTrue();
 		categoryLabel = new JLabel("Category");
 		categoryTextField = new JTextField(15);
-		categoryAlertLabel = new JLabel("New, used or certificated.");
+		categoryAlertLabel = new JLabel("New, used or certified.");
 		categorySetTrue();
 	}
 
