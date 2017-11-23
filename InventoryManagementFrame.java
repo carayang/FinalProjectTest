@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -13,6 +14,9 @@ public class InventoryManagementFrame extends JFrame {
 	private JLabel webIdLabel;
 	private JTextField webIdTextField;
 	private JLabel webIdAlertLabel;
+	private JLabel categoryLabel;
+	private JTextField categoryTextField;
+	private JLabel categoryAlertLabel;
 	private JLabel priceLabel;
 	private JTextField priceTextField;
 	private JLabel priceAlertLabel;
@@ -23,13 +27,6 @@ public class InventoryManagementFrame extends JFrame {
 		createPanel();
 		addListeners();
 		makeThisVisible();
-	}
-
-	private void addListeners() {
-		idTextField.addKeyListener(new VIDListener());
-		idTextField.setInputVerifier(new VehicleIDVerifier());
-		priceTextField.addKeyListener(new PriceListener());
-		priceTextField.setInputVerifier(new PriceVerifier());
 	}
 
 	private void createCompoments() {
@@ -45,16 +42,24 @@ public class InventoryManagementFrame extends JFrame {
 		webIdTextField = new JTextField(20);
 		webIdAlertLabel = new JLabel("Split by \"-\".");
 		webIdSetTrue();
+		categoryLabel = new JLabel("Category");
+		categoryTextField = new JTextField(15);
+		categoryAlertLabel = new JLabel("New, used or certificated.");
+		categorySetTrue();
 	}
 
 	private void createPanel() {
 		JPanel componetsPanel = new JPanel();
+		componetsPanel.setLayout(new GridLayout(0, 3));
 		componetsPanel.add(idLabel);
 		componetsPanel.add(idTextField);
 		componetsPanel.add(idAlertLabel);
 		componetsPanel.add(webIdLabel);
 		componetsPanel.add(webIdTextField);
 		componetsPanel.add(webIdAlertLabel);
+		componetsPanel.add(categoryLabel);
+		componetsPanel.add(categoryTextField);
+		componetsPanel.add(categoryAlertLabel);
 		componetsPanel.add(priceLabel);
 		componetsPanel.add(priceTextField);
 		componetsPanel.add(priceAlertLabel);
@@ -76,6 +81,7 @@ public class InventoryManagementFrame extends JFrame {
 		idTextField.setBorder(new LineBorder(Color.black));
 		idAlertLabel.setForeground(Color.black);
 	}
+
 	private void webidSetWrong() {
 		webIdTextField.setBorder(new LineBorder(Color.red));
 		webIdAlertLabel.setForeground(Color.red);
@@ -85,18 +91,30 @@ public class InventoryManagementFrame extends JFrame {
 		webIdTextField.setBorder(new LineBorder(Color.black));
 		webIdAlertLabel.setForeground(Color.black);
 	}
+	private void categorySetWrong() {
+		categoryTextField.setBorder(new LineBorder(Color.red));
+		categoryAlertLabel.setForeground(Color.red);
+	}
 
+	private void categorySetTrue() {
+		categoryTextField.setBorder(new LineBorder(Color.black));
+		categoryAlertLabel.setForeground(Color.black);
+	}
 	private void priceSetTrue() {
 		priceTextField.setBorder(new LineBorder(Color.black));
 		priceAlertLabel.setForeground(Color.black);
-		priceAlertLabel.setVisible(false);//newly added
-		
 	}
 
 	private void priceSetFalse() {
 		priceTextField.setBorder(new LineBorder(Color.red));
 		priceAlertLabel.setForeground(Color.red);
-		priceAlertLabel.setVisible(true);//newly added
+	}
+
+	private void addListeners() {
+		idTextField.addKeyListener(new VIDListener());
+		idTextField.setInputVerifier(new VehicleIDVerifier());
+		priceTextField.addKeyListener(new PriceListener());
+		priceTextField.setInputVerifier(new PriceVerifier());
 	}
 
 	private class VIDListener implements KeyListener {
