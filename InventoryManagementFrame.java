@@ -115,8 +115,10 @@ public class InventoryManagementFrame extends JFrame {
 		idTextField.setInputVerifier(new VehicleIDVerifier());
 		priceTextField.addKeyListener(new PriceListener());
 		priceTextField.setInputVerifier(new PriceVerifier());
+		webIdTextField.addKeyListener(new WebIDListener());
+		webIdTextField.setInputVerifier(new WebIDVerifier());
 	}
-
+	
 	private class VIDListener implements KeyListener {
 	    @Override
 	    public void keyPressed(KeyEvent e){}
@@ -142,11 +144,10 @@ public class InventoryManagementFrame extends JFrame {
 	        		idSetTrue();
 				}
 			}
-			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
-					&& keyInput >= KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9){//number
-				if(str.length() <= 9)
+			if(keyInput >= KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9){//number
+				if(str.length() < 10)
 					idSetTrue();
-				if(str.length() > 9){
+				else{
 					idSetWrong();
 					e.consume();
 				}
@@ -158,23 +159,19 @@ public class InventoryManagementFrame extends JFrame {
 
 		public boolean verify(JComponent input){
 			String vid = ((JTextField)input).getText();
-			if(vid.length() == 10){
+			if(vid.length() < 10){
+				idSetTrue();
+				return false;
+			}else if(vid.length() == 10){
 				idSetTrue();
 				return true;
 			}else{
-				idSetWrong();
 				return false;
 			}
 		}
 
 		public boolean shouldYieldFocus(JComponent input) {
-			/*
 			boolean valid = verify(input);
-			if(!valid){
-				idSetWrong();
-			}else{
-				idSetTrue();
-			}*/
 			return true;
 		}
 
@@ -205,8 +202,7 @@ public class InventoryManagementFrame extends JFrame {
 				if(str != "")
 					priceSetTrue();
 			}
-			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
-					&&keyInput >=KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9 ){
+			if(keyInput >=KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9 ){
 				priceSetTrue();
 			}
 		}
@@ -216,17 +212,79 @@ public class InventoryManagementFrame extends JFrame {
 
 		public boolean verify(JComponent input){
 			String str = ((JTextField)input).getText();
-			if(str != ""){//no need to judge if the content is > 0
+			if(!str.equals("")){
 				priceSetTrue();
 				return true;
 			}else{
-				priceSetFalse();
 				return false;
 			}
 		}
 
 		public boolean shouldYieldFocus(JComponent input) {
+			boolean valid = verify(input);
+			return true;
+		}
+	}
+
+	private class WebIDListener implements KeyListener{
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			int keyInput = e.getKeyChar();
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&& keyInput != KeyEvent.VK_MINUS
+					&& (keyInput < 65 || (keyInput > 90 && keyInput < 97)
+					|| keyInput > 122)){
+				webidSetWrong();
+				e.consume();
+			}//invalid input:输入除了回车删除和大小写字母以及横线以外的
+			String str = webIdTextField.getText();
+			int lastIndex = str.length() - 1;
+			if(keyInput == KeyEvent.VK_MINUS){
+				if(str.equals("")){
+					webidSetWrong();//首位出现横线
+				}
+			}
+			if(keyInput == KeyEvent.VK_ENTER){
+				if(str.contains("-") && str.charAt(lastIndex) != '-')//不能末尾为-
+					webIdSetTrue();
+				else
+					webidSetWrong();
+			}
+			if(keyInput == KeyEvent.VK_BACK_SPACE){
+				webIdSetTrue();
+			}
+			if((keyInput >= 65 && keyInput <= 90) || (keyInput >= 97 && keyInput <= 122)){
+				webIdSetTrue();
+			}
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {}
+
+		@Override
+		public void keyReleased(KeyEvent e) {}
+	}
+
+	private class WebIDVerifier extends InputVerifier{
+
+		@Override
+		public boolean verify(JComponent input) {
+			String str = ((JTextField)input).getText();
+			if(str.contains("-")){
+				webIdSetTrue();
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		@Override
+		public boolean shouldYieldFocus(JComponent input) {
+			boolean valid = verify(input);
 			return true;
 		}
 	}
 }
+
+
