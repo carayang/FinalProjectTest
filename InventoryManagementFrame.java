@@ -113,19 +113,20 @@ public class InventoryManagementFrame extends JFrame {
 	            e.consume();//invalid numeric input will be eliminated
 	        }
 			String str = idTextField.getText();
-	        if(keyInput == KeyEvent.VK_ENTER){
+	        if(keyInput == KeyEvent.VK_ENTER){//enter
 	        	if(str.length() != 10)
 	        		idSetWrong();
 	        	else
 	        		idSetTrue();
 			}
-			if(keyInput == KeyEvent.VK_BACK_SPACE){
+			if(keyInput == KeyEvent.VK_BACK_SPACE){//backspace
 	        	if(str.length() < 10){
 	        		idSetTrue();
 				}
 			}
-			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE){
-				if(str.length() == 9)
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&& keyInput >= KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9){//number
+				if(str.length() <= 9)
 					idSetTrue();
 				if(str.length() > 9){
 					idSetWrong();
@@ -186,7 +187,9 @@ public class InventoryManagementFrame extends JFrame {
 				if(str != "")
 					priceSetTrue();
 			}
-			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE){
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&&keyInput >=KeyEvent.VK_0 && keyInput <= KeyEvent.VK_9 ){
+				priceSetTrue();
 			}
 		}
 	}
@@ -205,15 +208,6 @@ public class InventoryManagementFrame extends JFrame {
 		}
 
 		public boolean shouldYieldFocus(JComponent input) {
-			/*
-			boolean valid = verify(input);
-			if(!valid){
-				idSetWrong();
-			}else{
-				idSetTrue();
-			}
-			return valid;
-			*/
 			return true;
 		}
 	}
