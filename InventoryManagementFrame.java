@@ -28,6 +28,8 @@ public class InventoryManagementFrame extends JFrame {
 	private void addListeners() {
 		idTextField.addKeyListener(new VIDListener());
 		idTextField.setInputVerifier(new VehicleIDVerifier());
+		priceTextField.addKeyListener(new PriceListener());
+		priceTextField.setInputVerifier(new PriceVerifier());
 	}
 
 	private void createCompoments() {
@@ -87,72 +89,132 @@ public class InventoryManagementFrame extends JFrame {
 	private void priceSetTrue() {
 		priceTextField.setBorder(new LineBorder(Color.black));
 		priceAlertLabel.setForeground(Color.black);
+		priceAlertLabel.setVisible(false);//newly added
+		
 	}
 
 	private void priceSetFalse() {
 		priceTextField.setBorder(new LineBorder(Color.red));
 		priceAlertLabel.setForeground(Color.red);
+		priceAlertLabel.setVisible(true);//newly added
 	}
 
 	private class VIDListener implements KeyListener {
-		@Override
-		public void keyPressed(KeyEvent e) {
-		}
-
-		@Override
-		public void keyReleased(KeyEvent e) {
-		}
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			int keyInput = e.getKeyChar();
-			if (keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
-					&& (keyInput < KeyEvent.VK_0 || keyInput > KeyEvent.VK_9)) {
-				idSetWrong();
-				e.consume();// invalid numeric input will be eliminated
-			}
+	    @Override
+	    public void keyPressed(KeyEvent e){}
+	    @Override
+	    public void keyReleased(KeyEvent e){}
+	    @Override
+	    public void keyTyped(KeyEvent e){
+	        int keyInput = e.getKeyChar();
+	        if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&& (keyInput < KeyEvent.VK_0 || keyInput > KeyEvent.VK_9)){
+	            idSetWrong();
+	            e.consume();//invalid numeric input will be eliminated
+	        }
 			String str = idTextField.getText();
-			if (keyInput == KeyEvent.VK_ENTER) {
-				if (str.length() != 10)
-					idSetWrong();
-				else
-					idSetTrue();
+	        if(keyInput == KeyEvent.VK_ENTER){
+	        	if(str.length() != 10)
+	        		idSetWrong();
+	        	else
+	        		idSetTrue();
 			}
-			if (keyInput == KeyEvent.VK_BACK_SPACE) {
-				if (str.length() < 10) {
-					idSetTrue();
+			if(keyInput == KeyEvent.VK_BACK_SPACE){
+	        	if(str.length() < 10){
+	        		idSetTrue();
 				}
 			}
-			if (keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE) {
-				if (str.length() == 9)
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE){
+				if(str.length() == 9)
 					idSetTrue();
-				if (str.length() > 9) {
+				if(str.length() > 9){
 					idSetWrong();
 					e.consume();
 				}
 			}
-		}
+	    }
 	}
 
-	public class VehicleIDVerifier extends InputVerifier {
+	private class VehicleIDVerifier extends InputVerifier {
 
-		public boolean verify(JComponent input) {
-			String vid = ((JTextField) input).getText();
-			if (vid.length() == 10) {
+		public boolean verify(JComponent input){
+			String vid = ((JTextField)input).getText();
+			if(vid.length() == 10){
+				idSetTrue();
 				return true;
-			} else {
+			}else{
+				idSetWrong();
 				return false;
 			}
 		}
 
 		public boolean shouldYieldFocus(JComponent input) {
+			/*
 			boolean valid = verify(input);
-			if (!valid) {
+			if(!valid){
 				idSetWrong();
-			} else {
+			}else{
+				idSetTrue();
+			}*/
+			return true;
+		}
+
+	}
+
+	private class PriceListener implements KeyListener {
+		@Override
+		public void keyPressed(KeyEvent e){}
+		@Override
+		public void keyReleased(KeyEvent e){}
+		@Override
+		public void keyTyped(KeyEvent e){
+			int keyInput = e.getKeyChar();
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE
+					&& (keyInput < KeyEvent.VK_0 || keyInput > KeyEvent.VK_9)){
+				priceSetFalse();
+				e.consume();//invalid numeric input will be eliminated
+			}
+			String str = priceTextField.getText();
+
+			if(keyInput == KeyEvent.VK_ENTER){
+				if(str == "")
+					priceSetFalse();
+				else
+					priceSetTrue();
+			}
+			if(keyInput == KeyEvent.VK_BACK_SPACE){
+				if(str != "")
+					priceSetTrue();
+			}
+			if(keyInput != KeyEvent.VK_ENTER && keyInput != KeyEvent.VK_BACK_SPACE){
+			}
+		}
+	}
+
+	private class PriceVerifier extends InputVerifier {
+
+		public boolean verify(JComponent input){
+			String str = ((JTextField)input).getText();
+			if(str != ""){//no need to judge if the content is > 0
+				priceSetTrue();
+				return true;
+			}else{
+				priceSetFalse();
+				return false;
+			}
+		}
+
+		public boolean shouldYieldFocus(JComponent input) {
+			/*
+			boolean valid = verify(input);
+			if(!valid){
+				idSetWrong();
+			}else{
 				idSetTrue();
 			}
 			return valid;
+			*/
+			return true;
 		}
 	}
 }
