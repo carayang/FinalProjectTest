@@ -226,6 +226,8 @@ public class InventoryManagementFrame extends JFrame {
 		priceTextField.setInputVerifier(new PriceVerifier());
 		webIdTextField.addKeyListener(new WebIDListener());
 		webIdTextField.setInputVerifier(new WebIDVerifier());
+		categoryTextField.addKeyListener(new CategoryListener());
+		categoryTextField.setInputVerifier(new CategoryVerifier());
 	}
 	
 	private class VIDListener implements KeyListener {
@@ -386,6 +388,48 @@ public class InventoryManagementFrame extends JFrame {
 			}else{
 				return false;
 			}
+		}
+
+		@Override
+		public boolean shouldYieldFocus(JComponent input) {
+			boolean valid = verify(input);
+			return true;
+		}
+	}
+	private class CategoryListener implements KeyListener{
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			int keyInput = e.getKeyChar();
+			if(keyInput == 67 || keyInput == 78 || keyInput == 85 || keyInput == 99
+					|| keyInput == 110 || keyInput == 117 || keyInput == KeyEvent.VK_ENTER
+					|| keyInput == KeyEvent.VK_BACK_SPACE) {
+				categorySetTrue();
+			}else{
+				categorySetWrong();
+				e.consume();
+			}
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {}
+
+		@Override
+		public void keyReleased(KeyEvent e) {}
+	}
+
+	private class CategoryVerifier extends InputVerifier {
+		@Override
+		public boolean verify(JComponent input) {
+			String str = ((JTextField)input).getText();
+			if (str.equals("new") || str.equals("used") || str.equals("certified")){
+				categorySetTrue();
+				return true;
+			}else {
+				categorySetTrue();
+				return false;
+			}
+
 		}
 
 		@Override
