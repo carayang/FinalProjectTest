@@ -1,10 +1,18 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 @SuppressWarnings("serial")
 public class InventoryManagementFrame extends JFrame {
@@ -43,7 +51,12 @@ public class InventoryManagementFrame extends JFrame {
 		webIdAlertLabel = new JLabel("Split by \"-\".");
 		webIdSetTrue();
 		categoryLabel = new JLabel("Category");
+		ArrayList<String> categoryItems = new ArrayList<String>();
+		categoryItems.add("new");
+		categoryItems.add("used");
+		categoryItems.add("certified");
 		categoryTextField = new JTextField(15);
+		setupAutoComplete(categoryTextField, categoryItems);
 		categoryAlertLabel = new JLabel("New, used or certified.");
 		categorySetTrue();
 	}
@@ -72,6 +85,100 @@ public class InventoryManagementFrame extends JFrame {
 		this.setResizable(false);
 	}
 
+	@SuppressWarnings("rawtypes")
+	private static boolean isAdjusting(JComboBox cbInput) {
+		if (cbInput.getClientProperty("is_adjusting") instanceof Boolean) {
+			return (Boolean) cbInput.getClientProperty("is_adjusting");
+		}
+		return false;
+	}
+
+	@SuppressWarnings("rawtypes")
+	private static void setAdjusting(JComboBox cbInput, boolean adjusting) {
+		cbInput.putClientProperty("is_adjusting", adjusting);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void setupAutoComplete(final JTextField txtInput, final ArrayList<String> items) {
+		final DefaultComboBoxModel model = new DefaultComboBoxModel();
+		final JComboBox cbInput = new JComboBox(model) {
+			public Dimension getPreferredSize() {
+				return new Dimension(super.getPreferredSize().width, 0);
+			}
+		};
+		setAdjusting(cbInput, false);
+		for (String item : items) {
+			model.addElement(item);
+		}
+		cbInput.setSelectedItem(null);
+		cbInput.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (!isAdjusting(cbInput)) {
+					if (cbInput.getSelectedItem() != null) {
+						txtInput.setText(cbInput.getSelectedItem().toString());
+					}
+				}
+			}
+		});
+
+		txtInput.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				setAdjusting(cbInput, true);
+				if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+					if (cbInput.isPopupVisible()) {
+						e.setKeyCode(KeyEvent.VK_ENTER);
+					}
+				}
+				if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_UP
+						|| e.getKeyCode() == KeyEvent.VK_DOWN) {
+					e.setSource(cbInput);
+					cbInput.dispatchEvent(e);
+					if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+						txtInput.setText(cbInput.getSelectedItem().toString());
+						cbInput.setPopupVisible(false);
+					}
+				}
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					cbInput.setPopupVisible(false);
+				}
+				setAdjusting(cbInput, false);
+			}
+		});
+		txtInput.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				updateList();
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				updateList();
+			}
+
+			public void changedUpdate(DocumentEvent e) {
+				updateList();
+			}
+
+			private void updateList() {
+				setAdjusting(cbInput, true);
+				model.removeAllElements();
+				String input = txtInput.getText();
+				if (!input.isEmpty()) {
+					for (String item : items) {
+						if (item.toLowerCase().startsWith(input.toLowerCase())) {
+							model.addElement(item);
+						}
+					}
+				}
+				cbInput.setPopupVisible(model.getSize() > 0);
+				setAdjusting(cbInput, false);
+			}
+		});
+		txtInput.setLayout(new BorderLayout());
+		txtInput.add(cbInput, BorderLayout.SOUTH);
+	}
+
 	private void idSetWrong() {
 		idTextField.setBorder(new LineBorder(Color.red));
 		idAlertLabel.setForeground(Color.red);
@@ -91,6 +198,7 @@ public class InventoryManagementFrame extends JFrame {
 		webIdTextField.setBorder(new LineBorder(Color.black));
 		webIdAlertLabel.setForeground(Color.black);
 	}
+
 	private void categorySetWrong() {
 		categoryTextField.setBorder(new LineBorder(Color.red));
 		categoryAlertLabel.setForeground(Color.red);
@@ -100,6 +208,7 @@ public class InventoryManagementFrame extends JFrame {
 		categoryTextField.setBorder(new LineBorder(Color.black));
 		categoryAlertLabel.setForeground(Color.black);
 	}
+
 	private void priceSetTrue() {
 		priceTextField.setBorder(new LineBorder(Color.black));
 		priceAlertLabel.setForeground(Color.black);
